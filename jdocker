@@ -3,13 +3,17 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub-creds'
-        IMAGE_NAME = 'lakshitha7/uln' // replace with your DockerHub repo
+        IMAGE_NAME = 'lakshitha7/uln'
     }
 
     stages {
         stage('Clone') {
             steps {
-                git branch: 'main', url: 'git@github.com:hiphoooo/myapp.git', credentialsId: 'github-ssh-key'
+                git(
+                    url: 'https://github.com/hiphoooo/myapp.git',
+                    branch: 'main',
+                    credentialsId: 'github-https-token'
+                )
             }
         }
 
@@ -24,7 +28,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${env.DOCKERHUB_CREDENTIALS}") {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
                         docker.image("${env.IMAGE_NAME}:${env.BUILD_NUMBER}").push()
                     }
                 }
@@ -33,15 +37,13 @@ pipeline {
 
         stage('Deploy Container') {
             steps {
-                script {
-                    // Stop old container (if exists) and run new one on Windows
-                    bat """
-                    docker stop myapp || exit 0
-                    docker rm myapp || exit 0
-                    docker run -d --name myapp -p 3000:3000 %IMAGE_NAME%:%BUILD_NUMBER%
-                    """
-                }
+                bat """
+                    docker stop myapp || true
+                    docker rm myapp || true
+                    docker run -d --name myapp -p 3000:3000 ${IMAGE_NAME}:${BUILD_NUMBER}
+                """
             }
         }
     }
 }
+
