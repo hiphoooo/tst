@@ -10,7 +10,7 @@ pipeline {
         stage('Clone') {
             steps {
                 git(
-                    url: 'https://github.com/hiphoooo/myapp.git',
+                    url: 'https://github.com/hiphoooo/tst.git',
                     branch: 'main',
                     credentialsId: '6e1ed71f-8b3b-4beb-b0ca-2a936f16e362'
                 )
