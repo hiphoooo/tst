@@ -12,7 +12,7 @@ pipeline {
                 git(
                     url: 'https://github.com/hiphoooo/myapp.git',
                     branch: 'main',
-                    credentialsId: 'github-https-token'
+                    credentialsId: '6e1ed71f-8b3b-4beb-b0ca-2a936f16e362'
                 )
             }
         }
